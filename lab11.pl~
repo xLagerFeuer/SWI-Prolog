@@ -53,19 +53,19 @@ parent(zhdana,zlatomir).
 
 %11
 daughter(X,Y):- parent(Y,X),woman(X),!.
-daughter(X):- parent(X,Y),woman(Y),!.
+daughter(X):- parent(X,Y),woman(Y),write(Y),!.
 
 daughter(duhovlad).
 
 %12
 wife(X, Y) :- man(Y),woman(X),parent(X, Z),parent(Y, Z),!.
-wife(X):- man(X),parent(X,Z),parent(Y,Z),woman(Y),!.
+wife(X):- man(X),parent(X,Z),parent(Y,Z),woman(Y),write(Y),!.
 
 wife(duhovlad).
 
 %13
 grand_ma(X,Y) :- parent(Z,Y), parent(X,Z),!.
-grand_ma(X) :- parent(Z,X),parent(Y,Z),woman(Y),!.
+grand_ma(X) :- parent(Z,X),parent(Y,Z),woman(Y),write(Y),!.
 
 grand_ma(duhovlad).
 
@@ -96,18 +96,64 @@ minTC(X, MIN, RES):-
     DIGIT is X mod 10,
     NEWX is X div 10,
     (DIGIT < MIN, minTC(NEWX, DIGIT, RES);minTC(NEWX, MIN, RES)).
-
-%min()
-
 %17
 %рекурсия вверх
+% CallUp: Search prod digits: not div 5
+
+allpairswith(_, 0) :- !.
+allpairswith(X, NUM) :-
+    NEWNUM is NUM div 10,
+    allpairswith(X, NEWNUM),
+    DIGIT is NUM mod 10,
+    (X*DIGIT mod 5 =\= 0, write(X), write('*'), write(DIGIT), nl; true).
+
+nondiv5searchCU(0) :- !.
+nondiv5searchCU(NUM):-
+    NEWNUM is NUM div 10,
+    nondiv5searchCU(NEWNUM),
+    DIGIT is NUM mod 10,
+    allpairswith(DIGIT, NEWNUM).
 
 %18
 %рекурсия вниз
+% CallUp: Search prod digits: not div 5
+
+% w/o acc
+allpairswithTC(_, 0) :- !.
+allpairswithTC(X, NUM) :-
+    NEWNUM is NUM div 10,
+    (X*DIGIT mod 5 =\= 0, write(X), write('*'), write(DIGIT), nl; true),
+    DIGIT is NUM mod 10,
+    allpairswith(X, NEWNUM).
+
+nondiv5searchTC(0) :- !.
+nondiv5searchTC(NUM):-
+    NEWNUM is NUM div 10,
+    DIGIT is NUM mod 10,
+    allpairswith(DIGIT, NEWNUM),
+    nondiv5searchCU(NEWNUM).
 
 %19
-%fib(N,X):-
+fibUC(0,0):-!.
+fibUC(1,1):-!.
+fibUC(2,1):-!.
+fibUC(NUM, RES):-
+    NUM1 is NUM - 1, fibU(NUM1, RES1),
+    NUM2 is NUM - 2, fibU(NUM2, RES2),
+    RES is RES1 + RES2.
 
 %20
-%fib(N,X):-
+
+fibTC(0,0):-!.
+fibTC(1,1):-!.
+fibTC(2,1):-!.
+fibTC(PREV1, SUM, NUM, RES):-
+    NUM>0,
+    SUM2 is SUM + PREV1,
+    NUM is NUM - 1,
+    fibTC(SUM, SUM2, NUM, RES)
+    ;
+    RES is SUM.
+
+fibTC(NUM, RES):- NUM2 is NUM-2, fibTC(1, 1, NUM2, RES).
 
