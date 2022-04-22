@@ -49,32 +49,53 @@ parent(zhdana,zdislava).
 parent(zhdana,zlatomir).
 
 % Variant 3. Zhdanoff Alexander
-% Visual tree
-%
-%11
-daughter(X):- parent(X,Y),woman(Y),write(Y),nl,fail.
-daughter(X,Y):- parent(Y,X),woman(X).
+% TODO: Ќарисовать св€зи, чтобы можно было показать
 
-daughter(zhdana).
+%11
+daughter(X,Y):- parent(Y,X),woman(X),!.
+daughter(X):- parent(X,Y),woman(Y),!.
+
+daughter(duhovlad).
 
 %12
-%wife(X, Y)
-%wife(X)
+wife(X, Y) :- man(Y),woman(X),parent(X, Z),parent(Y, Z),!.
+wife(X):- man(X),parent(X,Z),parent(Y,Z),woman(Y),!.
+
+wife(duhovlad).
 
 %13
-%grand_ma(X,Y)
-%grand_ma(X)
+grand_ma(X,Y) :- parent(Z,Y), parent(X,Z),!.
+grand_ma(X) :- parent(Z,X),parent(Y,Z),woman(Y),!.
+
+grand_ma(duhovlad).
 
 %14
-%grand_ma_and_da(X,Y)
+grand_ma_and_da(X,Y) :- grandma(X,Y),woman(Y);grandma(Y,X),woman(X).
+
 
 %15
 %рекурси€ вверх
 
-%min()
+%min(X,Y):-
+%    (X<Y, X; Y).
+%
+
+minCallUp(0,9):-!.
+minCallUp(X,RES):-
+    NEWX is X div 10,
+    minCallUp(NEWX,TAILRES),
+    DIGIT is X mod 10,
+   (DIGIT<TAILRES, RES is DIGIT;RES is TAILRES).
 
 %16
 %рекурси€ вниз
+
+minTC(X, RES):- minTC(X,9,RES).
+minTC(0, RES, RES):-!.
+minTC(X, MIN, RES):-
+    DIGIT is X mod 10,
+    NEWX is X div 10,
+    (DIGIT < MIN, minTC(NEWX, DIGIT, RES);minTC(NEWX, MIN, RES)).
 
 %min()
 
